@@ -1,0 +1,39 @@
+#Assumes the following modules have been loaded
+#module load netlib-scalapack
+#module load gcc
+#module load cuda
+#module load essl
+#module load netlib-lapack
+
+CC     = mpicc
+CFLAGS += -O2 -fopenmp
+
+ELPADIR = /ccs/proj/csc304/elpa
+SCALAPACKDIR = $(OLCF_NETLIB_SCALAPACK_ROOT)
+CUDADIR = $(OLCF_CUDA_ROOT)
+
+#to turn on/off openMP
+CFLAGS += -I $(ELPADIR)/include/elpa-2022.05.001
+
+LIBS = -L $(SCALAPACKDIR)/lib -L$(CUDADIR)/lib64 -L${ELPADIR}/lib -lelpa -lcudart -lcublas -lscalapack
+LIBS += -L${OLCF_ESSL_ROOT}/lib64 -lessl -lm -lpthread -fopenmp
+
+%.o:%.c
+	$(CC) $(CFLAGS) -c $<
+TARGET = ./main
+
+all: $(TARGET)
+
+OBJS = main.o
+
+# dependencies
+$(TARGET): $(OBJS)
+
+$(TARGET): $(OBJS)
+	$(CC) -o $(TARGET) $(OBJS) $(LIBS)
+
+#------------------------------------------------------------------------------
+#  Cleanup object files
+clean :
+	rm -rf *.o
+	rm -f $(TARGET)

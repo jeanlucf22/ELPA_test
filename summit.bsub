@@ -1,0 +1,23 @@
+#!/bin/csh
+#BSUB -P CSC304
+#BSUB -J elpa
+#BSUB -o elpa.o%J
+#BSUB -W 0:10
+#BSUB -nnodes 1
+#BSUB -q debug
+module load netlib-scalapack
+module load gcc
+module load cuda
+module load essl
+
+setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/ccs/proj/csc304/elpa/lib
+
+set exe = ~/GIT/jeanluc-test-codes/ELPA/main
+
+date
+
+setenv NUM_RES 4
+setenv NUM_CORES 7
+setenv OMP_NUM_THREADS 7
+
+jsrun -n $NUM_RES -a 1 -g 1 -c$NUM_CORES -bpacked:$NUM_CORES $exe 2048
